@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 	vector <int> ndep;
 	
 	string deptno,dname, loc;
-	
+	string val;
 	string empno,ename, job, hiredate,mgr, sal, comm, depto;
 	string query;
 	bool re=false;
@@ -165,12 +165,41 @@ int main(int argc, char** argv) {
 				error=sqlite3_open("oracle-sample.db",&conn);
 				cout<<"Numero de Empleado: ";
 				cin>>empno;
-				query = "select  from emp where empno = '"+empno+"'";
-				error=sqlite3_exec(conn,query.c_str(),0,0,0);
+				query = "select	mgr from emp where empno = '"+empno+"'";
+				error=sqlite3_prepare_v2(conn,query.c_str(),query.length()+1,&res,&tail);
 				if(error!=SQLITE_OK){
 					cout<<"ERROR EN EL QUERY"<<endl;
 					break;
 				}
+				if(sqlite3_step(res) == SQLITE_ROW){
+					val=(char*)sqlite3_column_text(res,0);
+				}
+				query = "select * from emp where mgr= '"+val+"'";
+				error = sqlite3_prepare_v2(conn,query.c_str(), query.length()+1, &res, &tail );
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
+				while(sqlite3_step(res) == SQLITE_ROW){
+					cout<<endl;
+					cout<<"Numero de Empleado: ";
+					cout<<sqlite3_column_text(res,0)<<endl;
+					cout<<"Nombre de Empleado: ";
+					cout<<sqlite3_column_text(res,1)<<endl;
+					cout<<"Trabajo: ";
+					cout<<sqlite3_column_text(res,2)<<endl;
+					cout<<"Numero Manager: ";
+					cout<<sqlite3_column_text(res,3)<<endl;
+					cout<<"Fecha: ";
+					cout<<sqlite3_column_text(res,4)<<endl;
+					cout<<"Salario: ";
+					cout<<sqlite3_column_text(res,5)<<endl;
+					cout<<"Comision: ";
+					cout<<sqlite3_column_text(res,6)<<endl;
+					cout<<"Numero de Departamento: ";
+					cout<<sqlite3_column_text(res,7)<<endl;
+					cout<<endl;
+				}	
 				sqlite3_close(conn);
 				break;
 				
