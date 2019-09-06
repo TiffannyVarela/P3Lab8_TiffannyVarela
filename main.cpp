@@ -37,6 +37,10 @@ int main(int argc, char** argv) {
 					case 1:
 						error = sqlite3_open("oracle-sample.db", &conn);
 						error = sqlite3_prepare_v2(conn, "select * from emp", 1000, &res, &tail);
+						if(error!=SQLITE_OK){
+							cout<<"ERROR EN EL QUERY"<<endl;
+							break;
+						}
 						while(sqlite3_step(res) == SQLITE_ROW){
 							cout<<endl;
 							cout<<"Numero de Empleado: ";
@@ -63,6 +67,10 @@ int main(int argc, char** argv) {
 					case 2:
 						error = sqlite3_open("oracle-sample.db", &conn);
 						error = sqlite3_prepare_v2(conn, "select * from dept", 1000, &res, &tail);
+						if(error!=SQLITE_OK){
+							cout<<"ERROR EN EL QUERY"<<endl;
+							break;
+						}
 						while(sqlite3_step(res) == SQLITE_ROW){
 							cout<<endl;
 							cout<<"Numero de Departamento: ";
@@ -84,46 +92,86 @@ int main(int argc, char** argv) {
 				switch(resp=menu2()){
 					
 					case 1:
-						error=sqlite3_open("base1.db",&conn);
+						error=sqlite3_open("oracle-sample.db",&conn);
 						cout<<"Empleado"<<endl;
-						cout<<"Numero ";
+						cout<<"Numero: ";
 						cin>>empno;
-						cout<<"Nombre ";
+						cout<<"Nombre: ";
 						cin>>ename;
-						cout<<"Trabajo ";
+						cout<<"Trabajo: ";
 						cin>>job;
-						cout<<"Jefe " ;
+						cout<<"Jefe: " ;
 						cin>>mgr;
-						cout<<"Fecha ";
+						cout<<"Fecha: ";
 						cin>>hiredate;
-						cout<<"Salario ";
+						cout<<"Salario: ";
 						cin>>sal;
-						cout<<"Comision";
+						cout<<"Comision: ";
 						cin>>comm;
-						cout<<"Numero de Departamento ";
+						cout<<"Numero de Departamento: ";
 						cin>>depto;
-						while(sqlite3_step(res) == SQLITE_ROW){
-							if("select * from dep where deptno = '"+depto+"'"){
-								cout<<"shi"<<endl;
-								/*
-								query = "insert into emp values('"+empno+"','"+ename+"','"+job+"','"+mgr+"','"+hiredate+"','"+sal+"','"+comm+"','"+depto+"')";
-							error=sqlite3_exec(conn,query.c_str(),0,0,0);
-								*/
-							}
+						
+						query = "select * from dept where deptno = '"+depto+"'";
+						sqlite3_prepare_v2(conn, query.c_str(), query.length()+1, &res,	&tail);
+						
+						if(error!=SQLITE_OK){
+							cout<<"ERROR EN EL QUERY"<<endl;
+							break;
 						}
+						
+						if(sqlite3_step(res) == SQLITE_ROW){
+							query = "insert into emp values('"+empno+"','"+ename+"','"+job+"','"+mgr+"','"+hiredate+"','"+sal+"','"+comm+"','"+depto+"')";
+							error=sqlite3_exec(conn,query.c_str(),0,0,0);
+						}
+						
 						sqlite3_close(conn);
 						break;
 						
 					case 2:
+						error=sqlite3_open("oracle-sample.db",&conn);
+						cout<<"Departamento"<<endl;
+						cout<<"Numero: ";
+						cin>>deptno;
+						cout<<"Nombre: ";
+						cin>>dname;
+						cout<<"Locacion: ";
+						cin>>loc;
+						query = "insert into dept values('"+deptno+"','"+dname+"','"+loc+"')";
+						error=sqlite3_exec(conn,query.c_str(),0,0,0);
+						if(error!=SQLITE_OK){
+							cout<<"ERROR EN EL QUERY"<<endl;
+							break;
+						}
+						sqlite3_close(conn);
 						break;
 						
 				}
 				break;
 				
 			case 3:
+				error=sqlite3_open("oracle-sample.db",&conn);
+				cout<<"Numero de empleado a eliminar: ";
+				cin>>empno;
+				query = "delete from emp where empno = '"+empno+"'";
+				error=sqlite3_exec(conn,query.c_str(),0,0,0);
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
+				sqlite3_close(conn);
 				break;
 				
 			case 4:
+				error=sqlite3_open("oracle-sample.db",&conn);
+				cout<<"Numero de Empleado: ";
+				cin>>empno;
+				query = "select  from emp where empno = '"+empno+"'";
+				error=sqlite3_exec(conn,query.c_str(),0,0,0);
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
+				sqlite3_close(conn);
 				break;
 				
 			case 5:
