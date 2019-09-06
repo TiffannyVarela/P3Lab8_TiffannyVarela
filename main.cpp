@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 	int error=0;
 	int rec_count =0;
 	const char *tail;
-	
+	int cont=0;
 		
 	int opc =0;
 	int resp =0;
@@ -232,29 +232,71 @@ int main(int argc, char** argv) {
 				error=sqlite3_open("oracle-sample.db",&conn);
 				cout<<"Numero de Empleado: ";
 				cin>>empno;
-				query = "select	mgr from emp where empno = '"+empno+"'";
+				query = "select	sal from emp where mgr = '"+empno+"'";
 				error=sqlite3_prepare_v2(conn,query.c_str(),query.length()+1,&res,&tail);
 				if(error!=SQLITE_OK){
 					cout<<"ERROR EN EL QUERY"<<endl;
 					break;
 				}
-				if(sqlite3_step(res) == SQLITE_ROW){
-					val=(char*)sqlite3_column_text(res,0);
-				}
-				query = "select sal from emp where mgr= '"+val+"'";
-				error = sqlite3_prepare_v2(conn,query.c_str(), query.length()+1, &res, &tail );
-				if(sqlite3_step(res) == SQLITE_ROW){
+				while(sqlite3_step(res) == SQLITE_ROW){
 					val=(char*)sqlite3_column_text(res,0);
 					sueldos=+atoi(val.c_str());
+					cont++;
 				}
+				
 				cout<<sueldos<<endl;
+				
+				if(cont<1){
+					cout<<"No se puede"<<endl;
+				}
+				else{
+					total=2*(sueldos/cont);
+				}
+				query = "update emp set sal='"+total+"'";
+				error=sqlite3_exec(conn,query.c_str(),0,0,0);
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
 				sqlite3_close(conn);
 				break;
 				
 			case 6:
+				error=sqlite3_open("oracle-sample.db",&conn);
+				cout<<"Numero de Departamento: ";
+				cin>>depto;
+				query = "select	* from emp where deptno = '"+depto+"'";
+				error=sqlite3_prepare_v2(conn,query.c_str(),query.length()+1,&res,&tail);
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
+				while(sqlite3_step(res) == SQLITE_ROW){
+					cout<<endl;
+					cout<<"EMPLEADO"<<endl;
+					cout<<"Numero de Empleado: ";
+					cout<<sqlite3_column_text(res,0)<<endl;
+					cout<<"Nombre de Empleado: ";
+					cout<<sqlite3_column_text(res,1)<<endl;
+					cout<<"Trabajo: ";
+					cout<<sqlite3_column_text(res,2)<<endl;
+					cout<<"Numero Manager: ";
+					cout<<sqlite3_column_text(res,3)<<endl;
+					cout<<"Fecha: ";
+					cout<<sqlite3_column_text(res,4)<<endl;
+					cout<<"Salario: ";
+					cout<<sqlite3_column_text(res,5)<<endl;
+					cout<<"Comision: ";
+					cout<<sqlite3_column_text(res,6)<<endl;
+					cout<<"Numero de Departamento: ";
+					cout<<sqlite3_column_text(res,7)<<endl;
+					cout<<endl;
+				}	
+				sqlite3_close(conn);
 				break;	
 				
 			case 7:
+				cout<<"Saliendo"<<endl;
 				break;	
 		}
 	}while(opc!=7);
