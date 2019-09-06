@@ -1,10 +1,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <sqlite3.h>
-
+#include <vector>
 using namespace std;
 
 int menu();
+int menu2();
 
 int main(int argc, char** argv) {
 	sqlite3 *conn;
@@ -17,20 +18,73 @@ int main(int argc, char** argv) {
 	int opc =0;
 	int resp =0;
 	
-	int deptno;
-	string dname, loc;
+	vector <int> ndep;
 	
-	int empno;
-	string ename, job, hiredate;
-	int mgr, sal, comm, depto;
+	string deptno,dname, loc;
+	
+	string empno,ename, job, hiredate,mgr, sal, comm, depto;
+	string query;
+	bool re=false;
+	string var;
+	
 	
 	do{
 		switch(opc=menu()){
 			case 1:
-				cout<<"Que desea agregar?: ";
-				switch(resp=menu()){
+				cout<<"Que desea listar?: ";
+				switch(resp=menu2()){
 					
 					case 1:
+						error = sqlite3_open("oracle-sample.db", &conn);
+						error = sqlite3_prepare_v2(conn, "select * from emp", 1000, &res, &tail);
+						while(sqlite3_step(res) == SQLITE_ROW){
+							cout<<endl;
+							cout<<"Numero de Empleado: ";
+							cout<<sqlite3_column_text(res,0)<<endl;
+							cout<<"Nombre de Empleado: ";
+							cout<<sqlite3_column_text(res,1)<<endl;
+							cout<<"Trabajo: ";
+							cout<<sqlite3_column_text(res,2)<<endl;
+							cout<<"Numero Manager: ";
+							cout<<sqlite3_column_text(res,3)<<endl;
+							cout<<"Fecha: ";
+							cout<<sqlite3_column_text(res,4)<<endl;
+							cout<<"Salario: ";
+							cout<<sqlite3_column_text(res,5)<<endl;
+							cout<<"Comision: ";
+							cout<<sqlite3_column_text(res,6)<<endl;
+							cout<<"Numero de Departamento: ";
+							cout<<sqlite3_column_text(res,7)<<endl;
+							cout<<endl;
+						}	
+						sqlite3_close(conn);
+						break;
+						
+					case 2:
+						error = sqlite3_open("oracle-sample.db", &conn);
+						error = sqlite3_prepare_v2(conn, "select * from dept", 1000, &res, &tail);
+						while(sqlite3_step(res) == SQLITE_ROW){
+							cout<<endl;
+							cout<<"Numero de Departamento: ";
+							cout<<sqlite3_column_text(res,0)<<endl;
+							cout<<"Nombre de Departamento: ";
+							cout<<sqlite3_column_text(res,1)<<endl;
+							cout<<"Locacion: ";
+							cout<<sqlite3_column_text(res,2)<<endl;
+							cout<<endl;
+						}	
+						sqlite3_close(conn);
+						break;
+						
+				}
+				break;
+				
+			case 2:
+				cout<<"Que desea Agregar?: ";
+				switch(resp=menu2()){
+					
+					case 1:
+						error=sqlite3_open("base1.db",&conn);
 						cout<<"Empleado"<<endl;
 						cout<<"Numero ";
 						cin>>empno;
@@ -48,15 +102,22 @@ int main(int argc, char** argv) {
 						cin>>comm;
 						cout<<"Numero de Departamento ";
 						cin>>depto;
+						while(sqlite3_step(res) == SQLITE_ROW){
+							if("select * from dep where deptno = '"+depto+"'"){
+								cout<<"shi"<<endl;
+								/*
+								query = "insert into emp values('"+empno+"','"+ename+"','"+job+"','"+mgr+"','"+hiredate+"','"+sal+"','"+comm+"','"+depto+"')";
+							error=sqlite3_exec(conn,query.c_str(),0,0,0);
+								*/
+							}
+						}
+						sqlite3_close(conn);
 						break;
 						
 					case 2:
 						break;
 						
 				}
-				break;
-				
-			case 2:
 				break;
 				
 			case 3:
@@ -70,8 +131,11 @@ int main(int argc, char** argv) {
 				
 			case 6:
 				break;	
+				
+			case 7:
+				break;	
 		}
-	}while(resp!=6);
+	}while(opc!=7);
 	
 	return 0;
 }
@@ -80,16 +144,17 @@ int menu(){
 	int opc=0;
 	while (true){
 		cout<<"MENU"<<endl
-			<<"1.-Nota 1"<<endl
-			<<"2.-Nota 2"<<endl
-			<<"3.-Nota 3"<<endl
-			<<"4.-Nota 4"<<endl
-			<<"5.-Nota 5"<<endl
-			<<"6.-Salir"<<endl;
+			<<"1.-Listar"<<endl
+			<<"2.-Agregar"<<endl
+			<<"3.-Eliminar"<<endl
+			<<"4.-Listar Jefe y Empleado"<<endl
+			<<"5.-Actualizar Salario Empleado"<<endl
+			<<"6.-Empleados de Departamento"<<endl
+			<<"7.-Salir"<<endl;
 			
 		cout<<"Ingrese una opcion: ";
 		cin>>opc;
-		if(opc>=1 && opc<=6){
+		if(opc>=1 && opc<=7){
 			return opc;
 		}
 		else{
@@ -102,6 +167,7 @@ int menu(){
 int menu2(){
 	int opc=0;
 	while (true){
+		cout<<endl;
 		cout<<"MENU"<<endl
 			<<"1.-Empleado"<<endl
 			<<"2.-Departamento"<<endl;
