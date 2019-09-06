@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <sqlite3.h>
 #include <vector>
+#include <string>
+#include <string.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 int menu();
@@ -27,6 +30,7 @@ int main(int argc, char** argv) {
 	string query;
 	bool re=false;
 	string var;
+	stringstream convert;
 	
 	
 	do{
@@ -243,23 +247,28 @@ int main(int argc, char** argv) {
 				while(sqlite3_step(res) == SQLITE_ROW){
 					val=(char*)sqlite3_column_text(res,0);
 					sueldos+=atoi(val.c_str());
-					cout << val << endl;
+					//cout << val << endl;
 					cont++;
 				}
 				
-				cout<<sueldos<<endl;
+				//cout<<sueldos<<endl;
 				
 				if(cont<1){
 					cout<<"No se puede"<<endl;
 				}
 				else{
+					
 					total=2*(sueldos/cont);
-				}
-				query = "update emp set sal='"+total.c_str()+"' where empno = '"+empno+"'";
-				error=sqlite3_exec(conn,query.c_str(),0,0,0);
-				if(error!=SQLITE_OK){
-					cout<<"ERROR EN EL QUERY"<<endl;
-					break;
+					convert << sal;
+					convert >> sal;
+					convert.str("");
+					convert.clear();
+					query = "update emp set sal='"+sal+"' where empno = '"+empno+"'";
+					error=sqlite3_exec(conn,query.c_str(),0,0,0);
+					if(error!=SQLITE_OK){
+						cout<<"ERROR EN EL QUERY"<<endl;
+						break;
+					}
 				}
 				sqlite3_close(conn);
 				break;
