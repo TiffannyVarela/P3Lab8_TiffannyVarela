@@ -19,7 +19,8 @@ int main(int argc, char** argv) {
 	int resp =0;
 	
 	vector <int> ndep;
-	
+	int sueldos=0;
+	int total;
 	string deptno,dname, loc;
 	string val;
 	string empno,ename, job, hiredate,mgr, sal, comm, depto;
@@ -228,6 +229,26 @@ int main(int argc, char** argv) {
 				break;
 				
 			case 5:
+				error=sqlite3_open("oracle-sample.db",&conn);
+				cout<<"Numero de Empleado: ";
+				cin>>empno;
+				query = "select	mgr from emp where empno = '"+empno+"'";
+				error=sqlite3_prepare_v2(conn,query.c_str(),query.length()+1,&res,&tail);
+				if(error!=SQLITE_OK){
+					cout<<"ERROR EN EL QUERY"<<endl;
+					break;
+				}
+				if(sqlite3_step(res) == SQLITE_ROW){
+					val=(char*)sqlite3_column_text(res,0);
+				}
+				query = "select sal from emp where mgr= '"+val+"'";
+				error = sqlite3_prepare_v2(conn,query.c_str(), query.length()+1, &res, &tail );
+				if(sqlite3_step(res) == SQLITE_ROW){
+					val=(char*)sqlite3_column_text(res,0);
+					sueldos=+atoi(val.c_str());
+				}
+				cout<<sueldos<<endl;
+				sqlite3_close(conn);
 				break;
 				
 			case 6:
