@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 				
 			case 3:
 				error=sqlite3_open("oracle-sample.db",&conn);
-				cout<<"Numero de empleado a eliminar: ";
+				cout<<"Numero de Empleado a Eliminar: ";
 				cin>>empno;
 				query = "delete from emp where empno = '"+empno+"'";
 				error=sqlite3_exec(conn,query.c_str(),0,0,0);
