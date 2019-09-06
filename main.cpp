@@ -238,9 +238,12 @@ int main(int argc, char** argv) {
 					cout<<"ERROR EN EL QUERY"<<endl;
 					break;
 				}
+				sueldos = 0;
+				cont = 0;
 				while(sqlite3_step(res) == SQLITE_ROW){
 					val=(char*)sqlite3_column_text(res,0);
-					sueldos=+atoi(val.c_str());
+					sueldos+=atoi(val.c_str());
+					cout << val << endl;
 					cont++;
 				}
 				
@@ -252,7 +255,7 @@ int main(int argc, char** argv) {
 				else{
 					total=2*(sueldos/cont);
 				}
-				query = "update emp set sal='"+total+"'";
+				query = "update emp set sal='"+total.c_str()+"' where empno = '"+empno+"'";
 				error=sqlite3_exec(conn,query.c_str(),0,0,0);
 				if(error!=SQLITE_OK){
 					cout<<"ERROR EN EL QUERY"<<endl;
